@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PageDefault from '../../../components/PageDefault';
 import { Link } from 'react-router-dom';
 import FormField from '../../../components/Carousel/components/FormField';
+import Button from '../../../components/Button';
 
 function CadastroCategoria() {
     const valoresIniciais = {
@@ -26,6 +27,21 @@ function CadastroCategoria() {
         );
     }
 
+    useEffect(() => {
+        if (window.location.href.includes('localhost')) {
+            const URL = 'http://localhost:8080/categorias';
+            fetch(URL)
+                .then(async (respostaDoServer) => {
+                    if (respostaDoServer.ok) {
+                        const resposta = await respostaDoServer.json();
+                        setCategorias(resposta);
+                        return;
+                    }
+                    throw new Error('Não foi possível pegar os dados');
+                })
+        }
+    }, []);
+
     return (
         <PageDefault>
             <h1>Cadastro de Categoria: {values.nome}</h1>
@@ -43,14 +59,13 @@ function CadastroCategoria() {
                     onChange={handleChange}
                 />
 
-                <div>
-                    <label>
-                        Descrição:
-                    <textarea type="text" value={values.descricao} name="descricao"
-                            onChange={handleChange}
-                        ></textarea>
-                    </label>
-                </div>
+                <FormField
+                    label="Descrição"
+                    type="textarea"
+                    name="descricao"
+                    value={values.descricao}
+                    onChange={handleChange}
+                />
 
                 <FormField
                     label="Cor"
@@ -60,7 +75,7 @@ function CadastroCategoria() {
                     onChange={handleChange}
                 />
 
-                <button>Cadastrar</button>
+                <Button>Cadastrar</Button>
             </form>
 
             <ul>
